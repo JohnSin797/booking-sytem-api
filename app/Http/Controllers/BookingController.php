@@ -9,6 +9,7 @@ use App\Models\Package;
 use App\Models\PackageItem;
 use App\Models\Product;
 use Carbon\Carbon;
+use App\Http\Controllers\ImageController;
 
 class BookingController extends Controller
 {
@@ -39,9 +40,10 @@ class BookingController extends Controller
                 'schedule' => 'required',
                 'message' => 'nullable',
                 'user_id' => 'required|exists:users,id',
-                'services' => 'required'
+                'services' => 'required',
             ]);
             $totalCapital = Product::whereIn('id', $validated['product_id'])->sum('capital');
+            $image = ImageController::convertToBase64();
             $package = Package::create([
                 'name' => $validated['name'],
                 'package_type' => 'customized',
@@ -50,6 +52,7 @@ class BookingController extends Controller
                 'status' => 'active',
                 'total_price' => doubleval($validated['total_price']),
                 'capital' => $totalCapital,
+                'image' => $image
             ]);
             if (!$package) {
                 return response()->json(['message'=>'Failed to create Package'], 402);
@@ -116,7 +119,7 @@ class BookingController extends Controller
             $validated = $request->validate([
                 'user_id' => 'required|exists:users,id'
             ]);
-            $data = Booking::with('package.packageItem.product', 'package.rating', 'package.packageFeedbacks.user.packageRating', 'package.packageFeedbacks.packageFeedbackReply.user.packageRating')->where('user_id', $validated['user_id'])->get();
+            $data = Booking::with('package.packageItem.product', 'package.rating', 'package.packageFeedbacks.user.packageRating', 'package.packageFeedbacks.packageFeedbackReply.user.packageRating')->where('user_id', $validated['user_id'])->orderBy('created_at', 'desc')->get();
             return response()->json([
                 'message' => 'OK',
                 'data' => $data
