@@ -14,6 +14,7 @@ use App\Http\Controllers\PackageFeedbackReplyController;
 use App\Http\Controllers\PackageRatingController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\InquiryReplyController;
+use App\Http\Controllers\AboutController;
 use App\Models\Product;
 
 /*
@@ -29,6 +30,12 @@ use App\Models\Product;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::prefix('about')->controller(AboutController::class)->group(function() {
+    Route::get('index', 'index');
+    Route::post('store', 'store');
+    Route::post('update', 'update');
 });
 
 Route::prefix('user')->controller(UserController::class)->group(function() {
