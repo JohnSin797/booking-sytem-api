@@ -7,6 +7,22 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
+    public function search(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'keyword' => 'nullable'
+            ]);
+            $data = Product::where('name', 'LIKE', '%'.$validated['keyword'].'%')->orWhere('product_type', 'LIKE', '%'.$validated['keyword'].'%')->get();
+            return response()->json([
+                'message' => 'OK',
+                'data' => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json(['message'=>$e], 500);
+        }
+    }
+
     public function index()
     {
         try {

@@ -55,6 +55,7 @@ Route::prefix('product')->controller(ProductController::class)->group(function()
     Route::get('/archive', 'archive');
     Route::post('/restore', 'restore');
     Route::post('/destroy', 'destroy');
+    Route::post('/search', 'search');
 });
 
 Route::prefix('package')->controller(PackageController::class)->group(function() {
