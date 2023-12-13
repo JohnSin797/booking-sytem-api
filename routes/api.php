@@ -99,6 +99,7 @@ Route::prefix('package-feedback')->controller(PackageFeedbackController::class)-
 Route::prefix('package-feedback-reply')->controller(PackageFeedbackReplyController::class)->group(function() {
     Route::get('/index', 'index');
     Route::post('/store', 'store');
+    Route::post('/show', 'show');
 });
 
 Route::post('/package-rating/store', [PackageRatingController::class, 'store']);

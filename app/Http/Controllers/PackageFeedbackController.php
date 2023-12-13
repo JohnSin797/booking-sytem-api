@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PackageFeedback;
 use App\Models\Package;
+use App\Models\User;
 
 class PackageFeedbackController extends Controller
 {
@@ -30,6 +31,12 @@ class PackageFeedbackController extends Controller
                 'user_id' => 'required|exists:users,id',
                 'comment' => 'required'
             ]);
+            $user = User::find($validated['user_id']);
+            if ($user->packageFeedback()->whereHas('package', function($query) use($validated) {
+                $query->where('id', $validated['package_id']);
+            })->doesntExist()) {
+                return response()->json(['message'=>'Booking has not been confirmed yet'], 403);
+            }
             $result = PackageFeedback::create($validated);
             if (!$result) {
                 return response()->json(['message'=>'Failed to send feedback'], 402);
